@@ -1,15 +1,23 @@
-/*******************************************************************************
+/******************************************************************************
+ * Spine Runtime Software License - Version 1.0
+ * 
  * Copyright (c) 2013, Esoteric Software
  * All rights reserved.
  * 
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met:
+ * Redistribution and use in source and binary forms in whole or in part, with
+ * or without modification, are permitted provided that the following conditions
+ * are met:
  * 
- * 1. Redistributions of source code must retain the above copyright notice, this
- *    list of conditions and the following disclaimer.
- * 2. Redistributions in binary form must reproduce the above copyright notice,
- *    this list of conditions and the following disclaimer in the documentation
- *    and/or other materials provided with the distribution.
+ * 1. A Spine Single User License or Spine Professional License must be
+ *    purchased from Esoteric Software and the license must remain valid:
+ *    http://esotericsoftware.com/
+ * 2. Redistributions of source code must retain this license, which is the
+ *    above copyright notice, this declaration of conditions and the following
+ *    disclaimer.
+ * 3. Redistributions in binary form must reproduce this license, which is the
+ *    above copyright notice, this declaration of conditions and the following
+ *    disclaimer, in the documentation and/or other materials provided with the
+ *    distribution.
  * 
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -21,35 +29,24 @@
  * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- ******************************************************************************/
+ *****************************************************************************/
  
-var _self = argument[0];
+var this = argument[0];
 
-/*UV indices*/
-/*
-var VERTEX_X1 = 0, 
-VERTEX_Y1 = 1, 
-VERTEX_X2 = 2, 
-VERTEX_Y2 = 3, 
-VERTEX_X3 = 4, 
-VERTEX_Y3 = 5, 
-VERTEX_X4 = 6, 
-VERTEX_Y4 = 7;
-
-var width = ds_map_find_value(_self, 'width');
-var height = ds_map_find_value(_self, 'height');
-var x1 = ds_map_find_value(_self, 'x');
-var y1 = ds_map_find_value(_self, 'y');
-var regionOriginalWidth = ds_map_find_value(_self, 'regionOriginalWidth');
-var regionOriginalHeight = ds_map_find_value(_self, 'regionOriginalHeight');
-var scaleX = ds_map_find_value(_self, 'scaleX');
-var scaleY = ds_map_find_value(_self, 'scaleY');
-var regionOffsetX = ds_map_find_value(_self, 'regionOffsetX');
-var regionScaleY = ds_map_find_value(_self, 'regionScaleY');
-var regionWidth = ds_map_find_value(_self, 'regionWidth');
-var regionHeight = ds_map_find_value(_self, 'regionHeight');
-var rotation = ds_map_find_value(_self, 'rotation');
-var offset = ds_map_find_value(_self, 'offset');
+var width = ds_map_find_value(this, 'width');
+var height = ds_map_find_value(this, 'height');
+var x1 = ds_map_find_value(this, 'x');
+var y1 = ds_map_find_value(this, 'y');
+var regionOriginalWidth = ds_map_find_value(this, 'regionOriginalWidth');
+var regionOriginalHeight = ds_map_find_value(this, 'regionOriginalHeight');
+var scaleX = ds_map_find_value(this, 'scaleX');
+var scaleY = ds_map_find_value(this, 'scaleY');
+var regionOffsetX = ds_map_find_value(this, 'regionOffsetX');
+var regionOffsetY = ds_map_find_value(this, 'regionOffsetY');
+var regionWidth = ds_map_find_value(this, 'regionWidth');
+var regionHeight = ds_map_find_value(this, 'regionHeight');
+var rotation = ds_map_find_value(this, 'rotation');
+var offset = ds_map_find_value(this, 'offset');
 
 var regionScaleX = width / regionOriginalWidth * scaleX;
 var regionScaleY = height / regionOriginalHeight * scaleY;
@@ -57,7 +54,7 @@ var localX = -width / 2 * scaleX + regionOffsetX * regionScaleX;
 var localY = -height / 2 * scaleY + regionOffsetY * regionScaleY;
 var localX2 = localX + regionWidth * regionScaleX;
 var localY2 = localY + regionHeight * regionScaleY;
-var radians = degtorad(roation);
+var radians = degtorad(rotation);
 var cosine = cos(radians);
 var sine = sin(radians);
 
@@ -70,12 +67,13 @@ var localX2Sin = localX2 * sine;
 var localY2Cos = localY2 * cosine + y1;
 var localY2Sin = localY2 * sine;
 
-ds_list_insert(offset, VERTEX_X1,  localXCos - localYSin);
-ds_list_insert(offset, VERTEX_Y1,  localYCos + localXSin);
-ds_list_insert(offset, VERTEX_X2,  localXCos - localY2Sin);
-ds_list_insert(offset, VERTEX_Y2,  localY2Cos + localXSin);
-ds_list_insert(offset, VERTEX_X3,  localX2Cos - localY2Sin);
-ds_list_insert(offset, VERTEX_Y3,  localY2Cos + localX2Sin);
-ds_list_insert(offset, VERTEX_X4,  localX2Cos - localYSin);
-ds_list_insert(offset, VERTEX_Y4,  localYCos + localX2Sin);
-*/
+offset[SPINEAPI_VERTEX_X1] = localXCos - localYSin;
+offset[SPINEAPI_VERTEX_Y1] = localYCos + localXSin;
+offset[SPINEAPI_VERTEX_X2] = localXCos - localY2Sin;
+offset[SPINEAPI_VERTEX_Y2] = localY2Cos + localXSin;
+offset[SPINEAPI_VERTEX_X3] = localX2Cos - localY2Sin;
+offset[SPINEAPI_VERTEX_Y3] = localY2Cos + localX2Sin;
+offset[SPINEAPI_VERTEX_X4] = localX2Cos - localYSin;
+offset[SPINEAPI_VERTEX_Y4] = localYCos + localX2Sin;
+
+ds_map_replace(this, 'offset', offset);

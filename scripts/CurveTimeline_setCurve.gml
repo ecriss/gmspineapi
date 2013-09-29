@@ -1,15 +1,23 @@
-/*******************************************************************************
+/******************************************************************************
+ * Spine Runtime Software License - Version 1.0
+ * 
  * Copyright (c) 2013, Esoteric Software
  * All rights reserved.
  * 
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met:
+ * Redistribution and use in source and binary forms in whole or in part, with
+ * or without modification, are permitted provided that the following conditions
+ * are met:
  * 
- * 1. Redistributions of source code must retain the above copyright notice, this
- *    list of conditions and the following disclaimer.
- * 2. Redistributions in binary form must reproduce the above copyright notice,
- *    this list of conditions and the following disclaimer in the documentation
- *    and/or other materials provided with the distribution.
+ * 1. A Spine Single User License or Spine Professional License must be
+ *    purchased from Esoteric Software and the license must remain valid:
+ *    http://esotericsoftware.com/
+ * 2. Redistributions of source code must retain this license, which is the
+ *    above copyright notice, this declaration of conditions and the following
+ *    disclaimer.
+ * 3. Redistributions in binary form must reproduce this license, which is the
+ *    above copyright notice, this declaration of conditions and the following
+ *    disclaimer, in the documentation and/or other materials provided with the
+ *    distribution.
  * 
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -21,9 +29,9 @@
  * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- ******************************************************************************/
+ *****************************************************************************/
  
-var _self = argument[0];
+var this = argument[0];
 var frameIndex = argument[1];
 var cx1 = argument[2];
 var cy1 = argument[3];
@@ -37,17 +45,19 @@ var pre1 = 3 * subdiv_step;
 var pre2 = 3 * subdiv_step2;
 var pre4 = 6 * subdiv_step2;
 var pre5 = 6 * subdiv_step3;
-var tmp1x = ((-1 * cx1) * 2) + cx2;
-var tmp1y = ((-1 * cy1) * 2) + cy2;
+var tmp1x = -cx1 * 2 + cx2;
+var tmp1y = -cy1 * 2 + cy2;
 var tmp2x = (cx1 - cx2) * 3 + 1;
 var tmp2y = (cy1 - cy2) * 3 + 1;
 
 var i = frameIndex * 6;
-var curves = ds_map_find_value(_self, 'curves');
+var curves = ds_map_find_value(this, 'curves');
 
-ds_list_insert(curves, i, cx1 * pre1 + tmp1x * pre2 + tmp2x * subdiv_step3);
-ds_list_insert(curves, i + 1, cy1 * pre1 + tmp1y * pre2 + tmp2y * subdiv_step3);
-ds_list_insert(curves, i + 2, tmp1x * pre4 + tmp2x * pre5);
-ds_list_insert(curves, i + 3, tmp1y * pre4 + tmp2y * pre5);
-ds_list_insert(curves, i + 4, tmp2x * pre5);
-ds_list_insert(curves, i + 5, tmp2y * pre5);
+curves[i] = cx1 * pre1 + tmp1x * pre2 + tmp2x * subdiv_step3;
+curves[i + 1] = cy1 * pre1 + tmp1y * pre2 + tmp2y * subdiv_step3;
+curves[i + 2] = tmp1x * pre4 + tmp2x * pre5;
+curves[i + 3] = tmp1y * pre4 + tmp2y * pre5;
+curves[i + 4] = tmp2x * pre5;
+curves[i + 5] = tmp2y * pre5;
+
+ds_map_replace(this, 'curves', curves);

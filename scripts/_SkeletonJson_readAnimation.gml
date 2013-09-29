@@ -1,16 +1,23 @@
-
-/*******************************************************************************
+/******************************************************************************
+ * Spine Runtime Software License - Version 1.0
+ * 
  * Copyright (c) 2013, Esoteric Software
  * All rights reserved.
  * 
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met:
+ * Redistribution and use in source and binary forms in whole or in part, with
+ * or without modification, are permitted provided that the following conditions
+ * are met:
  * 
- * 1. Redistributions of source code must retain the above copyright notice, this
- *    list of conditions and the following disclaimer.
- * 2. Redistributions in binary form must reproduce the above copyright notice,
- *    this list of conditions and the following disclaimer in the documentation
- *    and/or other materials provided with the distribution.
+ * 1. A Spine Single User License or Spine Professional License must be
+ *    purchased from Esoteric Software and the license must remain valid:
+ *    http://esotericsoftware.com/
+ * 2. Redistributions of source code must retain this license, which is the
+ *    above copyright notice, this declaration of conditions and the following
+ *    disclaimer.
+ * 3. Redistributions in binary form must reproduce this license, which is the
+ *    above copyright notice, this declaration of conditions and the following
+ *    disclaimer, in the documentation and/or other materials provided with the
+ *    distribution.
  * 
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -22,14 +29,14 @@
  * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- ******************************************************************************/
-var _self = argument[0];
+ *****************************************************************************/
+var this = argument[0];
 var animationMap = argument[1];
 var skeletonData = argument[2];
 
 var animation;
 
-var scale = ds_map_find_value(_self, 'scale');
+var scale = ds_map_find_value(this, 'scale');
 var name = ds_map_find_value(animationMap, 'name');
 var bones = ds_map_find_value(animationMap, 'bones');
 var boneCount = 0;
@@ -81,12 +88,13 @@ for (i = 0; i < boneCount; ++i) {
 
     if (boneIndex == -1) {
         Animation_dispose(animation);
-        _SkeletonJson_setError(_self, animationMap, "Bone not found: ", boneName);
+        _SkeletonJson_setError(this, animationMap, "Bone not found: ", boneName);
         return 0;
     }
     
     var timelineType = ds_map_find_first(boneMap);
     timelineCount = ds_map_size(boneMap)
+    
     
     for (ii = 0; ii < timelineCount; ++ii) {
         var duration;
@@ -95,7 +103,7 @@ for (i = 0; i < boneCount; ++i) {
         
         if (timelineType == 'rotate') {
             var timeline = RotateTimeline_create(frameCount);
-            var frames = ds_map_find_value(timeline, 'frames');
+            
             
             ds_map_replace(timeline, 'boneIndex', boneIndex);
             
@@ -104,12 +112,16 @@ for (i = 0; i < boneCount; ++i) {
                 var frame = ds_list_find_value(timelineList, iii);
                 var time = ds_map_find_value(frame, 'time');
                 var angle = ds_map_find_value(frame, 'angle');
+                
                 RotateTimeline_setFrame(timeline, iii, time, angle);
                 _SkeletonJson_readCurve(timeline, iii, frame);
             }
             
             ds_list_add(timelines, timeline);
-            duration = ds_list_find_value(frames, frameCount * 2 - 2);
+            
+            var frames = ds_map_find_value(timeline, 'frames');
+                       
+            duration = frames[frameCount * 2 - 2];
             
             if (duration > animationDuration) {
                 animationDuration = duration;
@@ -130,7 +142,6 @@ for (i = 0; i < boneCount; ++i) {
                 timeline = TranslateTimeline_create(frameCount);
               }
               
-              var frames = ds_map_find_value(timeline, 'frames');
               ds_map_replace(timeline, 'boneIndex', boneIndex);
               
               for (iii = 0; iii < frameCount; ++iii) {
@@ -142,25 +153,28 @@ for (i = 0; i < boneCount; ++i) {
                 
                 TranslateTimeline_setFrame(timeline, iii, time, x1, y1);
                 _SkeletonJson_readCurve(timeline, iii, frame);
-                
+                ds_map_destroy(frame);
               }
               
               ds_list_add(timelines, timeline);
-              duration = ds_list_find_value(frames, frameCount * 3 - 3);
-            
+              
+              var frames = ds_map_find_value(timeline, 'frames');
+              //duration = ds_list_find_value(frames, frameCount * 3 - 3);
+              duration = frames[frameCount * 3 - 3];
               if (duration > animationDuration) {
                 animationDuration = duration;
               }
 
             }  else {
                Animation_dispose(animation);
-               _SkeletonJson_setError(_self, 0, "Invalid timeline type for a bone: ", timelineType);
+               _SkeletonJson_setError(this, 0, "Invalid timeline type for a bone: ", timelineType);
                return 0;
             }
         
         }
         
-        timelineType = ds_map_find_next(boneMap, timelineType)
+        timelineType = ds_map_find_next(boneMap, timelineType);
+        ds_list_destroy(timelineList);
     }
     
     boneName = ds_map_find_next(bones, boneName);
@@ -175,7 +189,7 @@ for (i = 0; i < slotCount; ++i) {
     
     if (slotIndex == -1) {
       Animation_dispose(animation);
-      _SkeletonJson_setError(_self, animatioMap, "Slot not found: ", slotName);
+      _SkeletonJson_setError(this, animatioMap, "Slot not found: ", slotName);
       return 0;
     }
     
@@ -201,6 +215,7 @@ for (i = 0; i < slotCount; ++i) {
              
              ColorTimeline_setFrame(timeline, iii, time, r, g, b, a);
              _SkeletonJson_readCurve(timeline, iii, frame);
+             ds_map_destroy(frame);
         }
         
         ds_list_add(timelines, timeline);
@@ -220,6 +235,7 @@ for (i = 0; i < slotCount; ++i) {
             var time = ds_map_find_value(frame, 'time');
             
             AttachmentTimeline_setFrame(timeline, iii, time, name);
+            ds_map_destroy(frame);
         }
         
         ds_list_add(timelines, timeline);
@@ -232,12 +248,13 @@ for (i = 0; i < slotCount; ++i) {
       } else {
       
         Animation_dispose(animation);
-        _SkeletonJson_setError(_self, 0, "Invalid timeline type for a slot: ", timelineType);
+        _SkeletonJson_setError(this, 0, "Invalid timeline type for a slot: ", timelineType);
         return 0;
         
       }
       
       timelineType = ds_map_find_next(slotMap, timelineType);
+      ds_map_destroy(timelineList);
       
     }
     

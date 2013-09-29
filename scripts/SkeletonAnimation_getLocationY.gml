@@ -1,2 +1,2 @@
-var _self = argument[0];
-return ds_map_find_value(_self, 'locationY');
+var this = argument[0];
+return ds_map_find_value(this, 'locationY');

@@ -1,15 +1,23 @@
-/*******************************************************************************
+/******************************************************************************
+ * Spine Runtime Software License - Version 1.0
+ * 
  * Copyright (c) 2013, Esoteric Software
  * All rights reserved.
  * 
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met:
+ * Redistribution and use in source and binary forms in whole or in part, with
+ * or without modification, are permitted provided that the following conditions
+ * are met:
  * 
- * 1. Redistributions of source code must retain the above copyright notice, this
- *    list of conditions and the following disclaimer.
- * 2. Redistributions in binary form must reproduce the above copyright notice,
- *    this list of conditions and the following disclaimer in the documentation
- *    and/or other materials provided with the distribution.
+ * 1. A Spine Single User License or Spine Professional License must be
+ *    purchased from Esoteric Software and the license must remain valid:
+ *    http://esotericsoftware.com/
+ * 2. Redistributions of source code must retain this license, which is the
+ *    above copyright notice, this declaration of conditions and the following
+ *    disclaimer.
+ * 3. Redistributions in binary form must reproduce this license, which is the
+ *    above copyright notice, this declaration of conditions and the following
+ *    disclaimer, in the documentation and/or other materials provided with the
+ *    distribution.
  * 
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -21,25 +29,26 @@
  * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- ******************************************************************************/
+ *****************************************************************************/
  
-var _self = argument[0];
+var this = argument[0];
 var json = argument[1];
 
 var skeletonData;
 var i, ii, ii, boneCount;
 var json_map = json_decode(json);
 var slots, skinsMap, animations;
-var scale = ds_map_find_value(_self, 'scale');
+var scale = ds_map_find_value(this, 'scale');
 
-if (!scale) {
+if (scale == 0) {
   scale = 1;
 }
 
-ds_map_add(_self, 'error', '');
+ds_map_replace(this, 'scale', scale);
+ds_map_add(this, 'error', '');
 
 if (json_map == -1) {
-    _SkeletonJson_setError(_self, 0, "Invalid skeleton JSON: ", '');
+    _SkeletonJson_setError(this, 0, "Invalid skeleton JSON: ", '');
     return 0;
 }
 
@@ -68,7 +77,7 @@ for (i = 0; i < boneCount; ++i) {
     if (!parent) {
       
       SkeletonData_dispose(skeletonData);
-      _SkeletonJson_setError(_self, json_map, "Parent bone not found: ", parentName);
+      _SkeletonJson_setError(this, json_map, "Parent bone not found: ", parentName);
       return 0;
     }
   }
@@ -82,8 +91,8 @@ for (i = 0; i < boneCount; ++i) {
   if !ds_map_exists(boneMap,'scaleX') ds_map_add(boneMap,'scaleX',1);
   if !ds_map_exists(boneMap,'scaleY') ds_map_add(boneMap,'scaleY',1);
   
-  ds_map_add(boneData, 'scaleX', ds_map_find_value(boneMap, 'scaleX'));
-  ds_map_add(boneData, 'scaleY', ds_map_find_value(boneMap, 'scaleY'));
+  ds_map_replace(boneData, 'scaleX', ds_map_find_value(boneMap, 'scaleX'));
+  ds_map_replace(boneData, 'scaleY', ds_map_find_value(boneMap, 'scaleY'));
   ds_list_add(skelBones, boneData);
 
 }
@@ -105,7 +114,7 @@ if (slots) {
     
     if (!boneData) {
         SkeletonData_dispose(skeletonData);
-        _SkeletonJson_setError(_self, json_map, "Slot bone not found: ", boneName);
+        _SkeletonJson_setError(this, json_map, "Slot bone not found: ", boneName);
         return 0;
     }
     
@@ -116,11 +125,12 @@ if (slots) {
     
       var rgba = hex_to_dec(color);
       var r = ((rgba >> 24) & $ff), g = ((rgba >> 16) & $ff), b = ((rgba >> 8) & $ff), a = (rgba & $ff) / 255;
-                        
+      
       ds_map_replace(slotData, 'r', r);
       ds_map_replace(slotData, 'g', g);
       ds_map_replace(slotData, 'b', b);
       ds_map_replace(slotData, 'a', a);
+      ds_map_replace(slotData, 'rgb', make_color_rgb(r, g, b));
     }
     
     attachmentItem = ds_map_find_value(slotMap, 'attachment');
@@ -135,7 +145,7 @@ if (slots) {
 }
 
 skinsMap = ds_map_find_value(json_map, 'skins');
-var attachmentLoader = ds_map_find_value(_self, 'attachmentLoader');
+var attachmentLoader = ds_map_find_value(this, 'attachmentLoader');
 
 if (skinsMap) {
     var skinCount = ds_map_size(skinsMap);
@@ -183,7 +193,7 @@ if (skinsMap) {
                 attachType = SPINEAPI_ATTACHMENT_REGION_SEQUENCE;
             } else {
                 SkeletonData_dispose(skeletonData);
-                _SkeletonJson_setError(_self, json_map, "Unknown attachment type: ", attachmentType);
+                _SkeletonJson_setError(this, json_map, "Unknown attachment type: ", attachmentType);
                 return 0;
             }
             
@@ -192,7 +202,7 @@ if (skinsMap) {
             if (!attachment) {
                 if (ds_map_find_value(attachmentLoader, 'error1')) {
                    SkeletonData_dispose(skeletonData);
-                   _SkeletonJson_setError(_self, json_map, ds_map_find_value(attachmentLoader, 'error1'), ds_map_find_value(attachmentLoader, 'error2'));
+                   _SkeletonJson_setError(this, json_map, ds_map_find_value(attachmentLoader, 'error1'), ds_map_find_value(attachmentLoader, 'error2'));
                    return 0;
                 }
                 continue;
@@ -219,11 +229,14 @@ if (skinsMap) {
                 
             Skin_addAttachment(skin, slotIndex, skinAttachmentName, attachment);
             skinAttachmentName = ds_map_find_next(attachmentsMap, skinAttachmentName);
+            ds_map_destroy(attachmentMap);
         }
         
         slotName = ds_map_find_next(slotMap, slotName);
+        ds_map_destroy(attachmentsMap);
       }
       skinName = ds_map_find_next(skinsMap, skinName);
+      ds_map_destroy(slotMap);
     }
 
 }
@@ -243,11 +256,21 @@ if (animations) {
             ds_map_add(animationMap, 'name', animKey);
         }
         
-        _SkeletonJson_readAnimation(_self, animationMap, skeletonData);
+        _SkeletonJson_readAnimation(this, animationMap, skeletonData);
         animKey = ds_map_find_next(animations, animKey);
+        ds_map_destroy(animationMap);
     }
 
 }
 
+for (i = 0; i < boneCount; ++i) {
+     var boneMap = ds_list_find_value(bones, i);
+     ds_map_destroy(boneMap);
+}
+
+ds_list_destroy(bones);
+ds_list_destroy(slots);
+ds_map_destroy(animations);
+ds_map_destroy(skinsMap);
 ds_map_destroy(json_map);
 return skeletonData;

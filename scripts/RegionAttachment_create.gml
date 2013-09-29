@@ -1,15 +1,23 @@
-/*******************************************************************************
+/******************************************************************************
+ * Spine Runtime Software License - Version 1.0
+ * 
  * Copyright (c) 2013, Esoteric Software
  * All rights reserved.
  * 
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met:
+ * Redistribution and use in source and binary forms in whole or in part, with
+ * or without modification, are permitted provided that the following conditions
+ * are met:
  * 
- * 1. Redistributions of source code must retain the above copyright notice, this
- *    list of conditions and the following disclaimer.
- * 2. Redistributions in binary form must reproduce the above copyright notice,
- *    this list of conditions and the following disclaimer in the documentation
- *    and/or other materials provided with the distribution.
+ * 1. A Spine Single User License or Spine Professional License must be
+ *    purchased from Esoteric Software and the license must remain valid:
+ *    http://esotericsoftware.com/
+ * 2. Redistributions of source code must retain this license, which is the
+ *    above copyright notice, this declaration of conditions and the following
+ *    disclaimer.
+ * 3. Redistributions in binary form must reproduce this license, which is the
+ *    above copyright notice, this declaration of conditions and the following
+ *    disclaimer, in the documentation and/or other materials provided with the
+ *    distribution.
  * 
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -21,15 +29,23 @@
  * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- ******************************************************************************/
+ *****************************************************************************/
  
 var name = argument[0];
-var _self = ds_map_create();
-ds_map_add(_self, 'scaleX', 1);
-ds_map_add(_self, 'scaleY', 1);
-ds_map_add(_self, 'uvs', ds_list_create());
-ds_map_add(_self, 'offset', ds_list_create());
+var this = ds_map_create();
+ds_map_add(this, 'scaleX', 1);
+ds_map_add(this, 'scaleY', 1);
 
-_Attachment_init(_self, name, SPINEAPI_ATTACHMENT_REGION, _Attachment_deinit);
-return _self;
+var i, uvs, offset; 
+
+for (i=0; i < 8; i++) {
+  uvs[i]=0;
+  offset[i]=0;
+}
+
+ds_map_add(this, 'uvs', uvs);
+ds_map_add(this, 'offset', offset);
+
+_Attachment_init(this, name, SPINEAPI_ATTACHMENT_REGION, _Attachment_deinit);
+return this;
 
